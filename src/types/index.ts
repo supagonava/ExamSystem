@@ -1,38 +1,132 @@
+
+export enum Role {
+  ADMIN = 'ADMIN',
+  CANDIDATE = 'CANDIDATE',
+}
+
+export enum QuestionType {
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  TRUE_FALSE = 'TRUE_FALSE',
+  SHORT_ANSWER = 'SHORT_ANSWER',
+}
+
+export enum ScheduleStatus {
+  SCHEDULED = 'SCHEDULED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum ResultStatus {
+  PENDING = 'PENDING',
+  PASSED = 'PASSED',
+  FAILED = 'FAILED',
+}
+
 export interface User {
-  _id: string;
+  id: string;
   username: string;
-  password: string;
-  role: 'admin' | 'candidate';
   email: string;
+  password: string;
+  role: Role;
+  firstName?: string;
+  lastName?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  examsCreated?: Exam[];
+  schedules?: ExamSchedule[];
+  examResults?: ExamResult[];
 }
 
 export interface Exam {
-  _id: string;
+  id: string;
   title: string;
-  description: string;
+  description?: string;
   duration: number;
   passingScore: number;
-  questions: Question[];
-  lesson?: {
-    content: string;
-    readingTime: number;
-  };
+  createdBy: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  creator?: User;
+  questions?: Question[];
+  schedules?: ExamSchedule[];
+  results?: ExamResult[];
+  lesson?: Lesson;
 }
 
 export interface Question {
-  _id: string;
+  id: string;
+  examId: string;
   text: string;
-  options: string[];
-  correctAnswer: number;
+  type: QuestionType;
   score: number;
+  orderIndex: number;
+  createdAt: Date;
+  updatedAt: Date;
+  exam?: Exam;
+  answers?: Answer[];
+  responses?: AnswerResponse[];
+}
+
+export interface Answer {
+  id: string;
+  questionId: string;
+  text: string;
+  isCorrect: boolean;
+  orderIndex: number;
+  question?: Question;
+  responses?: AnswerResponse[];
 }
 
 export interface ExamSchedule {
-  _id: string;
+  id: string;
   examId: string;
   candidateId: string;
   startTime: Date;
   endTime: Date;
-  status: 'scheduled' | 'in-progress' | 'completed';
+  status: ScheduleStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  exam?: Exam;
+  candidate?: User;
+  result?: ExamResult;
 }
 
+export interface ExamResult {
+  id: string;
+  examId: string;
+  candidateId: string;
+  scheduleId: string;
+  score: number;
+  status: ResultStatus;
+  startedAt: Date;
+  completedAt?: Date;
+  exam?: Exam;
+  candidate?: User;
+  schedule?: ExamSchedule;
+  answers?: AnswerResponse[];
+}
+
+export interface AnswerResponse {
+  id: string;
+  resultId: string;
+  questionId: string;
+  answerId: string;
+  isCorrect: boolean;
+  createdAt: Date;
+  result?: ExamResult;
+  question?: Question;
+  answer?: Answer;
+}
+
+export interface Lesson {
+  id: string;
+  examId: string;
+  title: string;
+  content: string;
+  readingTime: number;
+  createdAt: Date;
+  updatedAt: Date;
+  exam?: Exam;
+}
