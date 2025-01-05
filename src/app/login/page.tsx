@@ -1,54 +1,19 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = Cookies.get('token');
-      if (token) {
-        try {
-          const res = await axios.get('/api/auth/me');
-          const { role } = res.data;
-
-          if (role === 'USER') {
-            window.open('/user/dashboard', '_self');
-          } else if (role === 'ADMIN') {
-            window.open('/admin/dashboard', '_self');
-          }
-        } catch (error) {
-          Cookies.remove('token');
-        }
-      }
-    };
-    checkAuth();
-  }, [router]);
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     try {
-      const res = await axios.post('/api/auth/login', {
-        email: emailOrUsername.includes('@') ? emailOrUsername : undefined,
-        username: !emailOrUsername.includes('@') ? emailOrUsername : undefined,
-        password,
-      });
-
-      const { token, role } = res.data;
-      Cookies.set('token', token);
-
-      if (role === 'USER') {
-        window.open('/user/dashboard', "_self");
-      } else if (role === 'ADMIN') {
-        window.open('/admin/dashboard', "_self");;
-      }
+      await login(emailOrUsername, password);
+      // Redirection is now handled in AuthContext
     } catch (error) {
       setError('Invalid credentials');
     }

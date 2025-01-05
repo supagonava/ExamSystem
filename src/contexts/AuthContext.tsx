@@ -1,7 +1,8 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { mockAuth, mockUsers } from '@/lib/mockData';
+import Cookies from 'js-cookie';
 
 interface User {
   id: string;
@@ -13,11 +14,12 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -29,32 +31,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get('/api/auth/me');
-      setUser(response.data);
+      const token = Cookies.get('token');
+      if (token) {
+        const lastUsername = Cookies.get('lastUsername');
+        const mockUser = mockUsers.find(u => u.username === lastUsername);
+        if (mockUser) {
+          const { password, ...userWithoutPassword } = mockUser;
+          setUser(userWithoutPassword as User);
+        }
+      }
     } catch (error) {
       setUser(null);
-      router.push('/login');
+      Cookies.remove('token');
+      Cookies.remove('lastUsername');
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      setUser(response.data.user);
+      const { token, user } = mockAuth.login(username, password);
+      Cookies.set('token', token);
+      Cookies.set('lastUsername', String(username).toUpperCase());
+      setUser(user as User);
+
+      // Handle redirection based on role
+      const role = user.role;
+      if (role === 'USER') {
+        window.open('/user/dashboard', "_self");
+      } else if (role === 'ADMIN') {
+        window.open('/admin/dashboard', "_self");
+      }
     } catch (error) {
       throw new Error('Authentication failed');
     }
   };
 
   const logout = async () => {
-    try {
-      await axios.post('/api/auth/logout');
-      setUser(null);
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+    Cookies.remove('token');
+    Cookies.remove('lastUsername');
+    setUser(null);
   };
 
   return (

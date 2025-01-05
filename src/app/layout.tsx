@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
+import { PrimeReactProvider } from 'primereact/api';
 import { AuthProvider } from '@/contexts/AuthContext';
 import AdminNavbar from '@/components/AdminNavbar';
 import UserNavbar from '@/components/UserNavbar';
 import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
+import { mockAuth } from '@/lib/mockData';
 import "primereact/resources/themes/tailwind-light/theme.css";
 import 'primeicons/primeicons.css';
 import "./globals.css";
@@ -22,18 +22,9 @@ export const metadata: Metadata = {
 
 async function getUserRole() {
   const cookieStore = await cookies();
-  const token = cookieStore.get('token');
-
-  if (token) {
-    try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret-key');
-      const { payload } = await jwtVerify(token.value, secret);
-      return payload.role as string;
-    } catch (error) {
-      return null;
-    }
-  }
-  return null;
+  const token = cookieStore.get('token')?.value;
+  const role = String(cookieStore.get('lastUsername')?.value || '').toUpperCase();
+  return token ? role : null;
 }
 
 export default async function RootLayout({
@@ -43,8 +34,8 @@ export default async function RootLayout({
 }>) {
   const role = await getUserRole();
   const { headers } = await import('next/headers');
-  const headersList = await headers();
-  const pathname = headersList.get('x-pathname') || '/';
+  const headersList = headers();
+  const pathname = (await headersList).get('x-pathname') || '/';
   const showNavbar = !['/login'].includes(pathname);
 
   return (
