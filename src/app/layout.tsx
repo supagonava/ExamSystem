@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import "./globals.css";
 import { PrimeReactProvider } from 'primereact/api';
 import { AuthProvider } from '@/contexts/AuthContext';
 import AdminNavbar from '@/components/AdminNavbar';
 import UserNavbar from '@/components/UserNavbar';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
+import "./globals.css";
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primeicons/primeicons.css';
 

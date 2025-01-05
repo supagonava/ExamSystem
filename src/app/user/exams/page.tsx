@@ -4,7 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
-import { getUpcomingExams } from '@/data/mock';
+import { getUpcomingExams } from '@/data/mock'; // Import mock function
 
 interface Exam {
     id: string;
@@ -13,6 +13,7 @@ interface Exam {
     duration: number;
     startTime: string;
     status: 'Ready' | 'Scheduled' | 'In Progress';
+    documentUrl?: string;
 }
 
 export default function UserExams() {
@@ -21,29 +22,19 @@ export default function UserExams() {
     const router = useRouter();
 
     useEffect(() => {
-        const fetchExams = () => {
+        // Replace API call with mock data
+        try {
             const mockExams = getUpcomingExams();
             setExams(mockExams);
+        } catch (error) {
+            console.error('Failed to load exams:', error);
+        } finally {
             setLoading(false);
-        };
-
-        fetchExams();
+        }
     }, []);
 
     const startExam = (examId: string) => {
-        router.push(`/user/exams/${examId}`);
-    };
-
-    const actionTemplate = (rowData: Exam) => {
-        return (
-            <Button
-                label="Start Exam"
-                severity="success"
-                size="small"
-                disabled={rowData.status !== 'Ready'}
-                onClick={() => startExam(rowData.id)}
-            />
-        );
+        router.push(`/user/exams/${examId}/documents`);
     };
 
     return (
@@ -64,9 +55,39 @@ export default function UserExams() {
                     body={(rowData) => `${rowData.duration} minutes`}
                     sortable
                 />
-                <Column field="startTime" header="Start Time" sortable />
-                <Column field="status" header="Status" sortable />
-                <Column body={actionTemplate} header="Action" style={{ width: '10%' }} />
+                <Column
+                    field="startTime"
+                    header="Start Time"
+                    body={(rowData) => new Date(rowData.startTime).toLocaleString()}
+                    sortable
+                />
+                <Column
+                    field="status"
+                    header="Status"
+                    sortable
+                    body={(rowData) => (
+                        <span className={`px-2 py-1 rounded ${
+                            rowData.status === 'Ready' ? 'bg-green-100 text-green-800' :
+                            rowData.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-blue-100 text-blue-800'
+                        }`}>
+                            {rowData.status}
+                        </span>
+                    )}
+                />
+                <Column
+                    body={(rowData) => (
+                        <Button
+                            label="Start Exam"
+                            severity="success"
+                            size="small"
+                            disabled={rowData.status === 'In Progress'}
+                            onClick={() => startExam(rowData.id)}
+                        />
+                    )}
+                    header="Action"
+                    style={{ width: '10%' }}
+                />
             </DataTable>
         </div>
     );

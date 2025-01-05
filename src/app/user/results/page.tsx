@@ -3,64 +3,53 @@
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Button } from 'primereact/button'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import { Card } from 'primereact/card'
+import { getUserResults } from '@/data/mock'
 
 export default function ResultsPage() {
-    const router = useRouter()
-    // Mock results data
-    const [results] = useState([
-        {
-            id: 1,
-            examTitle: 'Mathematics Final',
-            completedAt: '2024-01-15',
-            score: '85/100',
-            status: 'Passed'
-        },
-        {
-            id: 2,
-            examTitle: 'Physics Midterm',
-            completedAt: '2024-01-10',
-            score: '72/100',
-            status: 'Passed'
-        },
-        {
-            id: 3,
-            examTitle: 'Chemistry Quiz',
-            completedAt: '2024-01-05',
-            score: '45/100',
-            status: 'Failed'
-        },
-        {
-            id: 4,
-            examTitle: 'Biology Test',
-            completedAt: '2024-01-01',
-            score: '90/100',
-            status: 'Passed'
-        }
-    ])
+    const router = useRouter();
+    const [results] = useState(getUserResults("user1"));
 
     const actionTemplate = (rowData: any) => {
         return (
             <Button
                 label="View Details"
                 link
-                onClick={() => router.push(`/results/${rowData.id}`)}
+                onClick={() => router.push(`/user/results/${rowData.id}`)}
             />
         )
     }
 
-    return (
-        <div className="space-y-4">
-            <h1 className="text-2xl font-bold">Exam Results</h1>
+    const statusBodyTemplate = (rowData: any) => {
+        const className = rowData.status === 'Passed'
+            ? 'text-green-600'
+            : 'text-red-600';
+        return <span className={className}>{rowData.status}</span>;
+    };
 
-            <DataTable value={results}>
-                <Column field="examTitle" header="Exam" sortable />
-                <Column field="completedAt" header="Date" sortable />
-                <Column field="score" header="Score" sortable />
-                <Column field="status" header="Status" sortable />
-                <Column body={actionTemplate} header="Actions" />
-            </DataTable>
+    const scoreBodyTemplate = (rowData: any) => {
+        return `${rowData.correctAnswers}/${rowData.totalQuestions} (${rowData.score}%)`;
+    };
+
+    return (
+        <div className="max-w-4xl mx-auto p-4">
+
+
+            <Card>
+                <h2 className="text-xl font-bold mb-4">Exam History</h2>
+                <DataTable value={results} paginator rows={5}
+                    className="p-datatable-sm">
+                    <Column field="examTitle" header="Exam Title" sortable />
+                    <Column field="completedAt" header="Completed At" sortable />
+                    <Column body={scoreBodyTemplate} header="Score" sortable
+                        field="score" />
+                    <Column body={statusBodyTemplate} header="Status" sortable
+                        field="status" />
+                    <Column body={actionTemplate} header="Actions" />
+                </DataTable>
+            </Card>
         </div>
     )
 }

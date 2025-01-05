@@ -1,22 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* ...existing code... */
-
-.p-datatable-custom .p-datatable-thead > tr > th {
-    padding: 1rem;
-    border-width: 0 0 1px 0;
-}
-
-.p-datatable-custom .p-datatable-tbody > tr > td {
-    border-width: 0 0 1px 0;
-}
-
-.p-datatable-custom .p-paginator {
-    border-radius: 0 0 6px 6px;
-}
-
-.p-datatable-custom .p-datatable-tbody > tr:last-child > td {
-    border-bottom: none;
-}

@@ -141,3 +141,172 @@ flowchart TB
     style ReadingTime fill:#81C784,stroke:#333,stroke-width:2px,color:black
     style ViewPDF fill:#A5D6A7,stroke:#333,stroke-width:2px,color:black
 ```
+
+### หมายเหตุสำหรับ AI Copilot
+
+-   Prisma Schema
+
+```prisma
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  username      String         @unique
+  email         String         @unique
+  password      String
+  role          Role          @default(USER)
+  firstName     String?
+  lastName      String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  examsCreated  Exam[]        @relation("ExamCreator")
+  schedules     ExamSchedule[] @relation("CandidateSchedules")
+  examResults   ExamResult[]   @relation("CandidateResults")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Exam {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String?
+  duration      Int           // in minutes
+  passingScore  Int
+  createdBy     String        @db.ObjectId
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  creator       User          @relation("ExamCreator", fields: [createdBy], references: [id])
+  questions     Question[]
+  schedules     ExamSchedule[]
+  results       ExamResult[]
+  lesson        Lesson?
+}
+
+model Question {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  examId        String        @db.ObjectId
+  text          String
+  type          QuestionType  @default(MULTIPLE_CHOICE)
+  score         Int
+  orderIndex    Int
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  exam          Exam          @relation(fields: [examId], references: [id])
+  answers       Answer[]
+  responses     AnswerResponse[]
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+model Answer {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  questionId    String        @db.ObjectId
+  text          String
+  isCorrect     Boolean
+  orderIndex    Int
+  question      Question      @relation(fields: [questionId], references: [id])
+  responses     AnswerResponse[]
+}
+
+model ExamSchedule {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  examId        String        @db.ObjectId
+  candidateId   String        @db.ObjectId
+  startTime     DateTime
+  endTime       DateTime
+  status        ScheduleStatus @default(SCHEDULED)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  exam          Exam          @relation(fields: [examId], references: [id])
+  candidate     User          @relation("CandidateSchedules", fields: [candidateId], references: [id])
+  result        ExamResult?
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model ExamResult {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  examId        String        @db.ObjectId
+  candidateId   String        @db.ObjectId
+  scheduleId    String        @unique @db.ObjectId
+  score         Int
+  status        ResultStatus  @default(PENDING)
+  startedAt     DateTime
+  completedAt   DateTime?
+  exam          Exam          @relation(fields: [examId], references: [id])
+  candidate     User          @relation("CandidateResults", fields: [candidateId], references: [id])
+  schedule      ExamSchedule  @relation(fields: [scheduleId], references: [id])
+  answers       AnswerResponse[]
+}
+
+enum ResultStatus {
+  PENDING
+  PASSED
+  FAILED
+}
+
+model AnswerResponse {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  resultId      String        @db.ObjectId
+  questionId    String        @db.ObjectId
+  answerId      String        @db.ObjectId
+  isCorrect     Boolean
+  createdAt     DateTime      @default(now())
+  result        ExamResult    @relation(fields: [resultId], references: [id])
+  question      Question      @relation(fields: [questionId], references: [id])
+  answer        Answer        @relation(fields: [answerId], references: [id])
+}
+
+model Lesson {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  examId        String        @unique @db.ObjectId
+  title         String
+  content       String
+  readingTime   Int           // in minutes
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  exam          Exam          @relation(fields: [examId], references: [id])
+}
+```
+
+-   Use nextjs15 syntax
+-   if have params in tsx it will use Promise instead direct params for sample
+
+```tsx
+    { params }: Promise<{ id: string }>
+    const getResult = async () => {
+        const id = (await params)?.id;
+        if (id) {
+            const examData = getExamDetails(id);
+            const resultData = getResultById('result1'); // Temporarily hardcoded for mock
+            if (examData && resultData) {
+                setExam(examData);
+                setResult(resultData);
+            }
+        }
+    };
+
+    useEffect(() => {
+        getResult();
+    }, [params]);
+```

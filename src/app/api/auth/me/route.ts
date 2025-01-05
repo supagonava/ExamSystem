@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import * as jose from "jose";
+import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
-    const token = req.headers.get("authorization")?.split(" ")[1];
+    // Check Authorization header first
+    const authToken = req.headers.get("authorization")?.split(" ")[1];
+    // Check cookies
+    const cookieStore = cookies();
+    const cookieToken = (await cookieStore).get("token")?.value;
+
+    const token = authToken || cookieToken;
 
     if (!token) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
