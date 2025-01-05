@@ -12,7 +12,7 @@ model User {
   username      String         @unique
   email         String         @unique
   password      String
-  role          Role          @default(CANDIDATE)
+  role          Role          @default(USER)
   firstName     String?
   lastName      String?
   createdAt     DateTime      @default(now())
@@ -24,7 +24,7 @@ model User {
 
 enum Role {
   ADMIN
-  CANDIDATE
+  USER
 }
 
 model Exam {

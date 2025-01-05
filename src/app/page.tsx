@@ -15,6 +15,8 @@ const HomePage = () => {
 
         if (user.role === 'ADMIN') {
           router.push('/admin/dashboard');
+        } else if (user.role === 'USER') {
+          router.push('/user/dashboard');
         } else if (user.role === 'CANDIDATE') {
           router.push('/candidate/dashboard');
         } else {

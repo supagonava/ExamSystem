@@ -2,20 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ...existing code... */
+
+.p-datatable-custom .p-datatable-thead > tr > th {
+    padding: 1rem;
+    border-width: 0 0 1px 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.p-datatable-custom .p-datatable-tbody > tr > td {
+    border-width: 0 0 1px 0;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.p-datatable-custom .p-paginator {
+    border-radius: 0 0 6px 6px;
+}
+
+.p-datatable-custom .p-datatable-tbody > tr:last-child > td {
+    border-bottom: none;
 }

@@ -1,21 +1,45 @@
 import { NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
-
-const users = [
-  { id: '1', email: 'admin@example.com', password: 'admin123', role: 'ADMIN' },
-  { id: '2', email: 'candidate@example.com', password: 'candidate123', role: 'CANDIDATE' },
-];
+import { prisma } from '@/lib/prisma';
+import * as jose from 'jose';
+import bcrypt from 'bcrypt';
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json();
+  try {
+    const { email, username, password } = await req.json();
 
-  const user = users.find((u) => u.email === email && u.password === password);
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: email || '' },
+          { username: username || '' },
+        ],
+      },
+    });
 
-  if (user) {
-    const token = jwt.sign({ id: user.id, role: user.role }, 'secret-key', { expiresIn: '1h' });
-    return NextResponse.json({ token, role: user.role });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    }
+
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret-key');
+    const token = await new jose.SignJWT({ id: user.id, role: user.role })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('8h')
+      .sign(secret);
+
+    const response = NextResponse.json({ token, role: user.role });
+    response.cookies.set({
+      name: 'token',
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 8 // 8 hours in seconds
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Login error:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
-
-  return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
 }
 

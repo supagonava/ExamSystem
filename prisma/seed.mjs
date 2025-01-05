@@ -84,24 +84,24 @@ async function main() {
         },
     });
 
-    // Seed candidate
-    const candidatePassword = await hash("candidate123", 10);
-    const candidate = await prisma.user.create({
+    // Seed user (previously candidate)
+    const userPassword = await hash("user123", 10);
+    const user = await prisma.user.create({
         data: {
-            email: "candidate@example.com",
-            username: "candidate",
-            password: candidatePassword,
-            role: "CANDIDATE",
+            email: "user@example.com",
+            username: "user",
+            password: userPassword,
+            role: "USER",
             createdAt: new Date(),
             updatedAt: new Date(),
         },
     });
 
-    // Seed exam schedule
+    // Update exam schedule to use user
     const examSchedule = await prisma.examSchedule.create({
         data: {
             examId: exam.id,
-            candidateId: candidate.id,
+            candidateId: user.id,  // Using user.id instead of candidate.id
             startTime: new Date(),
             endTime: new Date(new Date().getTime() + 60 * 60000), // 1 hour later
             status: "SCHEDULED",
@@ -110,7 +110,7 @@ async function main() {
         },
     });
 
-    console.log({ admin, exam, candidate, examSchedule });
+    console.log({ admin, exam, user, examSchedule });
 }
 
 main()
