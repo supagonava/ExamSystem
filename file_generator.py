@@ -30,7 +30,7 @@ def generate_project_structure(root_dir, ignore_patterns=None):
                 build_structure(full_path, level + 1)
 
     build_structure(root_dir)
-    return "\n".join(["# Project Structure", "```", *structure, "```"])
+    return "\n".join(["### Project Structure", "```", *structure, "```"])
 
 
 if __name__ == "__main__":

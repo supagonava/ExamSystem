@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { PrimeReactProvider } from 'primereact/api';
+import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 import { AuthProvider } from '@/contexts/AuthContext';
 import AdminNavbar from '@/components/AdminNavbar';
 import UserNavbar from '@/components/UserNavbar';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
-import "./globals.css";
-import 'primereact/resources/themes/lara-light-blue/theme.css';
+import "primereact/resources/themes/tailwind-light/theme.css";
 import 'primeicons/primeicons.css';
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

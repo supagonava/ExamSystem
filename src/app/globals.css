@@ -1,3 +1,46 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer tailwind-base, primereact, tailwind-utilities;
+
+/* IMPORTANT: In "styled" mode you must add the PrimeReact Theme here. Do NOT include in "unstyled" mode */
+@import "primereact/resources/themes/lara-light-blue/theme.css" layer(primereact);
+
+@layer tailwind-base {
+    @tailwind base;
+}
+
+@layer tailwind-utilities {
+    @tailwind components;
+    @tailwind utilities;
+
+    /* Custom styles for PrimeReact components */
+    .p-inputtext {
+        @apply border border-gray-300 !important;
+    }
+
+    .p-dialog {
+        @apply shadow-lg border border-gray-200 !important;
+    }
+
+    .p-card {
+        @apply shadow-md border border-gray-200 !important;
+    }
+
+    .p-tabview-nav {
+        @apply border-b border-gray-200 !important;
+    }
+
+    .p-datatable {
+        @apply border border-gray-200 !important;
+    }
+
+    .p-datatable .p-datatable-header {
+        @apply bg-gray-50 !important;
+    }
+
+    .p-datatable .p-datatable-tbody > tr {
+        @apply border-b border-gray-100 !important;
+    }
+
+    .p-dropdown {
+        @apply border border-gray-300 !important;
+    }
+}

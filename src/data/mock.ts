@@ -227,3 +227,44 @@ export const getUserResults = (userId: string) => {
         status: result.status
     }));
 };
+
+// Add new mock data for admin pages
+export const mockAdminUsers = [
+  { id: 1, username: 'user1', email: 'user1@example.com', role: 'USER', status: 'Active', lastLogin: '2024-01-20' },
+  { id: 2, username: 'admin1', email: 'admin1@example.com', role: 'ADMIN', status: 'Active', lastLogin: '2024-01-21' },
+  { id: 3, username: 'user2', email: 'user2@example.com', role: 'USER', status: 'Inactive', lastLogin: '2024-01-15' },
+];
+
+export const mockAdminExams = [
+  { 
+    id: 1, 
+    title: 'ความปลอดภัยพื้นฐาน', 
+    description: 'การทดสอบความรู้เกี่ยวกับความปลอดภัย',
+    duration: 60,
+    questions: 20,
+    status: 'Active',
+    createdAt: '2024-01-20'
+  },
+];
+
+export const mockQuestionTypes = [
+  { label: 'Multiple Choice', value: 'MULTIPLE_CHOICE' },
+  { label: 'True/False', value: 'TRUE_FALSE' },
+  { label: 'Short Answer', value: 'SHORT_ANSWER' },
+];
+
+export const mockAdminQuestions = [
+    {
+        id: 1,
+        text: "อุปกรณ์ป้องกันส่วนบุคคล (PPE) ชนิดใดที่จำเป็นต้องสวมใส่เมื่อทำงานในพื้นที่ที่มีเสียงดัง?",
+        type: "MULTIPLE_CHOICE",
+        score: 1,
+        answers: [
+            { id: 1, text: "ที่ครอบหูหรือปลั๊กอุดหู", isCorrect: true },
+            { id: 2, text: "แว่นตานิรภัย", isCorrect: false },
+            { id: 3, text: "ถุงมือยาง", isCorrect: false },
+            { id: 4, text: "หน้ากากกันฝุ่น", isCorrect: false },
+        ],
+    },
+    // ...existing questions...
+];

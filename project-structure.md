@@ -1,8 +1,13 @@
-# Project Structure
+### Project Structure
+
 ```
 - app/
   - admin/
     - dashboard/
+      - page.tsx
+    - exams/
+      - page.tsx
+    - users/
       - page.tsx
   - api/
     - auth/
@@ -24,19 +29,27 @@
   - layout.tsx
   - login/
     - page.tsx
+  - page-wrapper.tsx
   - page.tsx
   - user/
     - dashboard/
       - page.tsx
     - exams/
       - [id]/
+        - ExamContent.tsx
         - documents/
+          - DocumentContent.tsx
           - page.tsx
         - page.tsx
+        - result/
+          - page.tsx
       - page.tsx
     - profile/
       - page.tsx
     - results/
+      - [id]/
+        - ResultContent.tsx
+        - page.tsx
       - page.tsx
 - components/
   - AdminNavbar.tsx
