@@ -1,0 +1,87 @@
+flowchart TB
+    Start((เริ่มต้น)) --> Login[เข้าสู่ระบบ Admin]
+    Login --> Dashboard[หน้า Dashboard]
+
+    subgraph MainFlow[ระบบหลัก]
+        direction LR
+        
+        subgraph ExamSystem[ระบบจัดการข้อสอบ]
+            direction TB
+            CreateExam[1 สร้างข้อสอบใหม่]
+            CreateLesson[1.1 สร้างเนื้อหาบทเรียน]
+            SetExamInfo[1.2 กำหนดข้อมูลข้อสอบ]
+            AddQuestions[1.3 เพิ่มคำถาม]
+            SetAnswers[1.4 กำหนดคำตอบ]
+            SetScoring[1.5 กำหนดเกณฑ์คะแนน]
+            SaveExam[1.6 บันทึกข้อสอบ]
+            
+            CreateExam --> CreateLesson
+            CreateLesson --> SetExamInfo
+            SetExamInfo --> AddQuestions
+            AddQuestions --> SetAnswers
+            SetAnswers --> SetScoring
+            SetScoring --> SaveExam
+        end
+
+        subgraph CandidateSystem[ระบบจัดการผู้สอบ]
+            direction TB
+            ManageCandidate[2 จัดการผู้สอบ]
+            AddCandidate[2.1 เพิ่มผู้สอบ]
+            EditCandidate[2.2 แก้ไขข้อมูลผู้สอบ]
+            AssignExam[2.3 กำหนดข้อสอบ]
+            SetSchedule[2.4 กำหนดตารางสอบ]
+            
+            ManageCandidate --> AddCandidate
+            AddCandidate --> EditCandidate
+            EditCandidate --> AssignExam
+            AssignExam --> SetSchedule
+        end
+
+        subgraph MonitorSystem[ระบบติดตามการสอบ]
+            direction TB
+            ExamMonitor[3 ติดตามการสอบ]
+            ActiveExams[3.1 ข้อสอบที่กำลังสอบ]
+            CheckProgress[3.2 ตรวจสอบความคืบหน้า]
+            ViewStatus[3.3 ดูสถานะการสอบ]
+            
+            ExamMonitor --> ActiveExams
+            ActiveExams --> CheckProgress
+            CheckProgress --> ViewStatus
+        end
+
+        subgraph ReportSystem[ระบบรายงาน]
+            direction TB
+            Reports[4 จัดการรายงาน]
+            ScoreReport[4.1 รายงานคะแนน]
+            ProgressReport[4.2 รายงานความก้าวหน้า]
+            StatReport[4.3 รายงานสถิติ]
+            ExportReport[4.4 ส่งออกรายงาน]
+            ExportType{ประเภทการส่งออก}
+            PDF[PDF]
+            Excel[Excel]
+            
+            Reports --> ScoreReport
+            ScoreReport --> ProgressReport
+            ProgressReport --> StatReport
+            StatReport --> ExportReport
+            ExportReport --> ExportType
+            ExportType --> PDF
+            ExportType --> Excel
+        end
+    end
+
+    Dashboard --> CreateExam
+    SaveExam --> ManageCandidate
+    SetSchedule --> ExamMonitor
+    ViewStatus --> Reports
+
+    %% สไตล์
+    style Start fill:#4CAF50,stroke:#333,stroke-width:2px,color:black
+    style Dashboard fill:#2196F3,stroke:#333,stroke-width:2px,color:white,color:black
+    style ExportType fill:#FF9800,stroke:#333,stroke-width:2px,color:black
+
+    %% หัวข้อหลัก
+    style CreateExam fill:#FFB74D,stroke:#333,stroke-width:2px,color:black
+    style ManageCandidate fill:#FFB74D,stroke:#333,stroke-width:2px,color:black
+    style ExamMonitor fill:#FFB74D,stroke:#333,stroke-width:2px,color:black
+    style Reports fill:#FFB74D,stroke:#333,stroke-width:2px,color:black

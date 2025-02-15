@@ -1,0 +1,44 @@
+flowchart TB
+    Start((เริ่มต้น)) --> Login[1 เข้าสู่ระบบ]
+    Login --> Dashboard[2 หน้าหลักผู้สอบ]
+
+    subgraph ExamProcess[ขั้นตอนการสอบ]
+        direction TB
+        Dashboard --> ViewSchedule[3 ดูตารางสอบ]
+        ViewSchedule --> CheckDocuments[3.1 ตรวจสอบเอกสารประกอบการสอบ]
+
+        %% ระบบอ่านเอกสาร
+        CheckDocuments --> ReadingTime[3.2 เวลาอ่านเอกสาร]
+        ReadingTime --> ViewPDF[ดู PDF]
+
+        ReadingTime --> |หมดเวลาอ่านเอกสาร| StartExam[3.3 เริ่มทำข้อสอบ]
+        StartExam --> ExamRules[3.4 อ่านกติกาการสอบ]
+        ExamRules --> DoExam[3.5 ทำข้อสอบ]
+
+        %% ระหว่างทำข้อสอบ
+        DoExam --> TimeRemaining[แสดงเวลาที่เหลือ]
+        DoExam --> SaveDraft[บันทึกคำตอบชั่วคราว]
+
+        DoExam --> Submit[3.6 ส่งข้อสอบ]
+    end
+
+    subgraph Results[ผลการสอบ]
+        direction TB
+        Submit --> ViewScore[4 ดูผลคะแนน]
+        ViewScore --> DetailedResults[4.1 ผลการสอบละเอียด]
+        DetailedResults --> ViewMistakes[4.2 ดูข้อผิดพลาด]
+        DetailedResults --> DownloadCert[4.3 ดาวน์โหลดใบรับรอง]
+    end
+
+    %% เพิ่มการเชื่อมโยงและเงื่อนไข
+    Submit --> |หมดเวลา/ส่งก่อนเวลา| ViewScore
+    Dashboard --> |ดูได้หลังสอบเสร็จ| ViewScore
+    ReadingTime --> |ข้ามการอ่าน| StartExam
+
+    %% สไตล์
+    style Start fill:#4CAF50,stroke:#333,stroke-width:2px,color:black
+    style Dashboard fill:#2196F3,stroke:#333,stroke-width:2px,color:black
+    style ExamProcess fill:#FF9800,stroke:#333,stroke-width:2px,color:black
+    style Results fill:#FF9800,stroke:#333,stroke-width:2px,color:black
+    style ReadingTime fill:#81C784,stroke:#333,stroke-width:2px,color:black
+    style ViewPDF fill:#A5D6A7,stroke:#333,stroke-width:2px,color:black

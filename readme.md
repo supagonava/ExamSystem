@@ -1,4 +1,7 @@
 # ระบบจัดการและจัดเก็บผลข้อสอบ
+## Demo URL : https://exam-system-eight.vercel.app/login
+- User: user, user123
+- Admin: admin, admin123
 
 ---
 
@@ -19,56 +22,6 @@
 ### ระบบรายงาน
 
 การสร้างและส่งออกรายงานประเภทต่างๆ
-
-```mermaid
-flowchart TB
-    Start((เริ่มต้น)) --> Login[เข้าสู่ระบบ Admin]
-    Login --> Dashboard[หน้า Dashboard]
-
-    %% ระบบจัดการข้อสอบ
-    Dashboard --> CreateExam[1 สร้างข้อสอบใหม่]
-    CreateExam-->CreateLesson[1.1 สร้างเนื้อหาบทเรียนให้เรียนก่อนสอบ]
-    CreateLesson --> SetExamInfo[1.2 กำหนดข้อมูลข้อสอบ]
-    SetExamInfo --> AddQuestions[1.3 เพิ่มคำถาม]
-    AddQuestions --> SetAnswers[1.4 กำหนดคำตอบ]
-    SetAnswers --> SetScoring[1.5 กำหนดเกณฑ์คะแนน]
-    SetScoring --> SaveExam[1.6 บันทึกข้อสอบ]
-
-    %% ระบบจัดการผู้สอบ
-    SaveExam --> ManageCandidate[2 จัดการผู้สอบ]
-    ManageCandidate --> AddCandidate[2.1 เพิ่มผู้สอบ]
-    AddCandidate --> EditCandidate[2.2 แก้ไขข้อมูลผู้สอบ]
-    EditCandidate --> AssignExam[2.3 กำหนดข้อสอบ]
-    AssignExam --> SetSchedule[2.4 กำหนดตารางสอบ]
-
-    %% ระบบติดตามการสอบ
-    SetSchedule --> ExamMonitor[3 ติดตามการสอบ]
-    ExamMonitor --> ActiveExams[3.1 ข้อสอบที่กำลังสอบ]
-    ActiveExams --> CheckProgress[3.2 ตรวจสอบความคืบหน้า]
-    CheckProgress --> ViewStatus[3.3 ดูสถานะการสอบ]
-
-    %% ระบบรายงาน
-    ViewStatus --> Reports[4 จัดการรายงาน]
-    Reports --> ScoreReport[4.1 รายงานคะแนน]
-    ScoreReport --> ProgressReport[4.2 รายงานความก้าวหน้า]
-    ProgressReport --> StatReport[4.3 รายงานสถิติ]
-
-    StatReport --> ExportReport[4.4 ส่งออกรายงาน]
-    ExportReport --> ExportType{ประเภทการส่งออก}
-    ExportType --> PDF[PDF]
-    ExportType --> Excel[Excel]
-
-    %% สไตล์
-    style Start fill:#4CAF50,stroke:#333,stroke-width:2px,color:black
-    style Dashboard fill:#2196F3,stroke:#333,stroke-width:2px,color:white,color:black
-    style ExportType fill:#FF9800,stroke:#333,stroke-width:2px,color:black
-
-    %% หัวข้อหลัก
-    style CreateExam fill:#FFB74D,stroke:#333,stroke-width:2px,color:black
-    style ManageCandidate fill:#FFB74D,stroke:#333,stroke-width:2px,color:black
-    style ExamMonitor fill:#FFB74D,stroke:#333,stroke-width:2px,color:black
-    style Reports fill:#FFB74D,stroke:#333,stroke-width:2px,color:black
-```
 
 ---
 
@@ -95,218 +48,139 @@ flowchart TB
 -   ดูคะแนนและผลการสอบโดยละเอียด
 -   ดาวน์โหลดใบรับรอง
 
-```mermaid
-flowchart TB
-    Start((เริ่มต้น)) --> Login[1 เข้าสู่ระบบ]
-    Login --> Dashboard[2 หน้าหลักผู้สอบ]
+# แผนการทำงานโดยละเอียด (เมษายน - กรกฎาคม 2567)
 
-    subgraph ExamProcess[ขั้นตอนการสอบ]
-        direction TB
-        Dashboard --> ViewSchedule[3 ดูตารางสอบ]
-        ViewSchedule --> CheckDocuments[3.1 ตรวจสอบเอกสารประกอบการสอบ]
+## เมษายน 2567 - เฟส 1: การติดตั้งและระบบยืนยันตัวตน
 
-        %% ระบบอ่านเอกสาร
-        CheckDocuments --> ReadingTime[3.2 เวลาอ่านเอกสาร]
-        ReadingTime --> ViewPDF[ดู PDF]
+**รวม: 40 ชั่วโมง | 12,000 บาท**
 
-        ReadingTime --> |หมดเวลาอ่านเอกสาร| StartExam[3.3 เริ่มทำข้อสอบ]
-        StartExam --> ExamRules[3.4 อ่านกติกาการสอบ]
-        ExamRules --> DoExam[3.5 ทำข้อสอบ]
+### สัปดาห์ที่ 1 (4-6 เม.ย.)
 
-        %% ระหว่างทำข้อสอบ
-        DoExam --> TimeRemaining[แสดงเวลาที่เหลือ]
-        DoExam --> SaveDraft[บันทึกคำตอบชั่วคราว]
+-   พฤ. 4 เม.ย. (1 ชม.): เริ่มต้นโครงการ, ติดตั้ง Git
+-   ศ. 5 เม.ย. (1 ชม.): ติดตั้งโปรเจค Next.js
+-   ส. 6 เม.ย. (8 ชม.): ติดตั้ง MongoDB & Prisma, ตั้งค่าเริ่มต้น
 
-        DoExam --> Submit[3.6 ส่งข้อสอบ]
-    end
+### สัปดาห์ที่ 2 (11-13 เม.ย.)
 
-    subgraph Results[ผลการสอบ]
-        direction TB
-        Submit --> ViewScore[4 ดูผลคะแนน]
-        ViewScore --> DetailedResults[4.1 ผลการสอบละเอียด]
-        DetailedResults --> ViewMistakes[4.2 ดูข้อผิดพลาด]
-        DetailedResults --> DownloadCert[4.3 ดาวน์โหลดใบรับรอง]
-    end
+-   พฤ. 11 เม.ย. (1 ชม.): จัดโครงสร้างโปรเจค
+-   ศ. 12 เม.ย. (1 ชม.): ติดตั้งระบบเส้นทาง
+-   ส. 13 เม.ย. (8 ชม.): ตั้งค่าสภาพแวดล้อมและการเผยแพร่
 
-    %% เพิ่มการเชื่อมโยงและเงื่อนไข
-    Submit --> |หมดเวลา/ส่งก่อนเวลา| ViewScore
-    Dashboard --> |ดูได้หลังสอบเสร็จ| ViewScore
-    ReadingTime --> |ข้ามการอ่าน| StartExam
+### สัปดาห์ที่ 3 (18-20 เม.ย.)
 
-    %% สไตล์
-    style Start fill:#4CAF50,stroke:#333,stroke-width:2px,color:black
-    style Dashboard fill:#2196F3,stroke:#333,stroke-width:2px,color:black
-    style ExamProcess fill:#FF9800,stroke:#333,stroke-width:2px,color:black
-    style Results fill:#FF9800,stroke:#333,stroke-width:2px,color:black
-    style ReadingTime fill:#81C784,stroke:#333,stroke-width:2px,color:black
-    style ViewPDF fill:#A5D6A7,stroke:#333,stroke-width:2px,color:black
+-   พฤ. 18 เม.ย. (1 ชม.): ติดตั้งบริบทการยืนยันตัวตน
+-   ศ. 19 เม.ย. (1 ชม.): สร้างคอมโพเนนท์เข้า/ออกระบบ
+-   ส. 20 เม.ย. (8 ชม.): ระบบยืนยันตัวตนผู้ใช้
+
+### สัปดาห์ที่ 4 (25-27 เม.ย.)
+
+-   พฤ. 25 เม.ย. (1 ชม.): ติดตั้งระบบสิทธิ์ตามบทบาท
+-   ศ. 26 เม.ย. (1 ชม.): การป้องกันการนำทาง
+-   ส. 27 เม.ย. (8 ชม.): เสร็จสิ้นเค้าโครงและการนำทางพื้นฐาน
+
+## พฤษภาคม 2567 - เฟส 2: ฟีเจอร์สำหรับผู้ดูแลระบบ
+
+**รวม: 40 ชั่วโมง | 12,000 บาท**
+
+### สัปดาห์ที่ 5 (2-4 พ.ค.)
+
+-   พฤ. 2 พ.ค. (1 ชม.): ติดตั้งโมเดลข้อสอบ
+-   ศ. 3 พ.ค. (1 ชม.): ติดตั้งโมเดลคำถาม
+-   ส. 4 พ.ค. (8 ชม.): ส่วนติดต่อผู้ใช้สำหรับสร้างข้อสอบ
+
+### สัปดาห์ที่ 6 (9-11 พ.ค.)
+
+-   พฤ. 9 พ.ค. (1 ชม.): ติดตั้งโมเดลคำตอบ
+-   ศ. 10 พ.ค. (1 ชม.): ติดตั้งโมเดลบทเรียน
+-   ส. 11 พ.ค. (8 ชม.): ส่วนติดต่อผู้ใช้สำหรับจัดการคำถาม
+
+### สัปดาห์ที่ 7 (16-18 พ.ค.)
+
+-   พฤ. 16 พ.ค. (1 ชม.): ติดตั้งการจัดการผู้ใช้
+-   ศ. 17 พ.ค. (1 ชม.): ติดตั้งโมเดลตารางเวลา
+-   ส. 18 พ.ค. (8 ชม.): การดำเนินการ CRUD ผู้ใช้
+
+### สัปดาห์ที่ 8 (23-25 พ.ค.)
+
+-   พฤ. 23 พ.ค. (1 ชม.): ติดตั้งแดชบอร์ดผู้ดูแล
+-   ศ. 24 พ.ค. (1 ชม.): ติดตั้งการจัดการตารางเวลา
+-   ส. 25 พ.ค. (8 ชม.): เสร็จสิ้นแดชบอร์ดผู้ดูแล
+
+## มิถุนายน 2567 - เฟส 3: ฟีเจอร์สำหรับผู้ใช้
+
+**รวม: 40 ชั่วโมง | 12,000 บาท**
+
+### สัปดาห์ที่ 9 (30 พ.ค.-1 มิ.ย.)
+
+-   พฤ. 30 พ.ค. (1 ชม.): ติดตั้งส่วนติดต่อข้อสอบ
+-   ศ. 31 พ.ค. (1 ชม.): คอมโพเนนท์จับเวลา
+-   ส. 1 มิ.ย. (8 ชม.): ระบบการทำข้อสอบ
+
+### สัปดาห์ที่ 10 (6-8 มิ.ย.)
+
+-   พฤ. 6 มิ.ย. (1 ชม.): ติดตั้งตัวดูเอกสาร
+-   ศ. 7 มิ.ย. (1 ชม.): ติดตั้งตัวจับเวลาอ่าน
+-   ส. 8 มิ.ย. (8 ชม.): ระบบการอ่านเอกสาร
+
+### สัปดาห์ที่ 11 (13-15 มิ.ย.)
+
+-   พฤ. 13 มิ.ย. (1 ชม.): ติดตั้งการคำนวณผล
+-   ศ. 14 มิ.ย. (1 ชม.): ติดตั้งการแสดงคะแนน
+-   ส. 15 มิ.ย. (8 ชม.): การติดตั้งระบบผลลัพธ์
+
+### สัปดาห์ที่ 12 (20-22 มิ.ย.)
+
+-   พฤ. 20 มิ.ย. (1 ชม.): ติดตั้งการติดตามความคืบหน้า
+-   ศ. 21 มิ.ย. (1 ชม.): เทมเพลตใบรับรอง
+-   ส. 22 มิ.ย. (8 ชม.): ระบบสร้างใบรับรอง
+
+## กรกฎาคม 2567 - เฟส 4: การพัฒนาขั้นสุดท้าย
+
+**รวม: 40 ชั่วโมง | 12,000 บาท**
+
+### สัปดาห์ที่ 13 (27-29 มิ.ย.)
+
+-   พฤ. 27 มิ.ย. (1 ชม.): ติดตั้งการสร้างรายงาน
+-   ศ. 28 มิ.ย. (1 ชม.): ติดตั้งโมดูลสถิติ
+-   ส. 29 มิ.ย. (8 ชม.): แดชบอร์ดการวิเคราะห์
+
+### สัปดาห์ที่ 14 (4-6 ก.ค.)
+
+-   พฤ. 4 ก.ค. (1 ชม.): ติดตั้งฟังก์ชันส่งออก
+-   ศ. 5 ก.ค. (1 ชม.): ติดตั้งการสร้าง PDF
+-   ส. 6 ก.ค. (8 ชม.): ระบบรายงานสมบูรณ์
+
+### สัปดาห์ที่ 15 (11-13 ก.ค.)
+
+-   พฤ. 11 ก.ค. (1 ชม.): ติดตั้งการทดสอบ
+-   ศ. 12 ก.ค. (1 ชม.): แก้ไขข้อผิดพลาด
+-   ส. 13 ก.ค. (8 ชม.): ทดสอบระบบ
+
+### สัปดาห์ที่ 16 (18-20 ก.ค.)
+
+-   พฤ. 18 ก.ค. (1 ชม.): ทบทวนเอกสาร
+-   ศ. 19 ก.ค. (1 ชม.): เตรียมการเผยแพร่
+-   ส. 20 ก.ค. (8 ชม.): เผยแพร่ระบบ
+
+## ตารางการทำงาน
+
+```
+พฤหัสบดี: 19:00-20:00 (1 ชั่วโมง)
+ศุกร์:     19:00-20:00 (1 ชั่วโมง)
+เสาร์:     09:00-18:00 (8 ชั่วโมง รวมเวลาพัก)
 ```
 
-### หมายเหตุสำหรับ AI Copilot
+## การแบ่งค่าใช้จ่าย
 
--   Prisma Schema
+-   ชั่วโมงต่อสัปดาห์: 10 ชั่วโมง
+-   อัตราต่อชั่วโมง: 300 บาท
+-   ค่าใช้จ่ายต่อสัปดาห์: 3,000 บาท
+-   รวมชั่วโมงทั้งโครงการ: 160 ชั่วโมง
+-   รวมค่าใช้จ่ายทั้งโครงการ: 48,000 บาท
 
-```prisma
-datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
-}
+## กำหนดส่งมอบงาน
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-model User {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  username      String         @unique
-  email         String         @unique
-  password      String
-  role          Role          @default(USER)
-  firstName     String?
-  lastName      String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  examsCreated  Exam[]        @relation("ExamCreator")
-  schedules     ExamSchedule[] @relation("CandidateSchedules")
-  examResults   ExamResult[]   @relation("CandidateResults")
-}
-
-enum Role {
-  ADMIN
-  USER
-}
-
-model Exam {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  title         String
-  description   String?
-  duration      Int           // in minutes
-  passingScore  Int
-  createdBy     String        @db.ObjectId
-  isActive      Boolean       @default(true)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  creator       User          @relation("ExamCreator", fields: [createdBy], references: [id])
-  questions     Question[]
-  schedules     ExamSchedule[]
-  results       ExamResult[]
-  lesson        Lesson?
-}
-
-model Question {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  examId        String        @db.ObjectId
-  text          String
-  type          QuestionType  @default(MULTIPLE_CHOICE)
-  score         Int
-  orderIndex    Int
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  exam          Exam          @relation(fields: [examId], references: [id])
-  answers       Answer[]
-  responses     AnswerResponse[]
-}
-
-enum QuestionType {
-  MULTIPLE_CHOICE
-  TRUE_FALSE
-  SHORT_ANSWER
-}
-
-model Answer {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  questionId    String        @db.ObjectId
-  text          String
-  isCorrect     Boolean
-  orderIndex    Int
-  question      Question      @relation(fields: [questionId], references: [id])
-  responses     AnswerResponse[]
-}
-
-model ExamSchedule {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  examId        String        @db.ObjectId
-  candidateId   String        @db.ObjectId
-  startTime     DateTime
-  endTime       DateTime
-  status        ScheduleStatus @default(SCHEDULED)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  exam          Exam          @relation(fields: [examId], references: [id])
-  candidate     User          @relation("CandidateSchedules", fields: [candidateId], references: [id])
-  result        ExamResult?
-}
-
-enum ScheduleStatus {
-  SCHEDULED
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-}
-
-model ExamResult {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  examId        String        @db.ObjectId
-  candidateId   String        @db.ObjectId
-  scheduleId    String        @unique @db.ObjectId
-  score         Int
-  status        ResultStatus  @default(PENDING)
-  startedAt     DateTime
-  completedAt   DateTime?
-  exam          Exam          @relation(fields: [examId], references: [id])
-  candidate     User          @relation("CandidateResults", fields: [candidateId], references: [id])
-  schedule      ExamSchedule  @relation(fields: [scheduleId], references: [id])
-  answers       AnswerResponse[]
-}
-
-enum ResultStatus {
-  PENDING
-  PASSED
-  FAILED
-}
-
-model AnswerResponse {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  resultId      String        @db.ObjectId
-  questionId    String        @db.ObjectId
-  answerId      String        @db.ObjectId
-  isCorrect     Boolean
-  createdAt     DateTime      @default(now())
-  result        ExamResult    @relation(fields: [resultId], references: [id])
-  question      Question      @relation(fields: [questionId], references: [id])
-  answer        Answer        @relation(fields: [answerId], references: [id])
-}
-
-model Lesson {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  examId        String        @unique @db.ObjectId
-  title         String
-  content       String
-  readingTime   Int           // in minutes
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  exam          Exam          @relation(fields: [examId], references: [id])
-}
-```
-
--   Use nextjs15 syntax
--   if have params in tsx it will use Promise instead direct params for sample
-
-```tsx
-    { params }: Promise<{ id: string }>
-    const getResult = async () => {
-        const id = (await params)?.id;
-        if (id) {
-            const examData = getExamDetails(id);
-            const resultData = getResultById('result1'); // Temporarily hardcoded for mock
-            if (examData && resultData) {
-                setExam(examData);
-                setResult(resultData);
-            }
-        }
-    };
-
-    useEffect(() => {
-        getResult();
-    }, [params]);
-```
+1. สิ้นเดือนเมษายน: ระบบยืนยันตัวตนเสร็จสมบูรณ์ (12,000 บาท)
+2. สิ้นเดือนพฤษภาคม: ระบบผู้ดูแลเสร็จสมบูรณ์ (12,000 บาท) 
+3. สิ้นเดือนมิถุนายน: ระบบสอบสำหรับผู้ใช้เสร็จสมบูรณ์ (12,000 บาท)
+4. สิ้นเดือนกรกฎาคม: ระบบรายงานและการเผยแพร่เสร็จสมบูรณ์ (12,000 บาท)
